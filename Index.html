@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LOTEX AI | Inteligencia Inmobiliaria a Medida</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        eficaxxBlue: '#004f8f',
+                        eficaxxGreen: '#78ab00',
+                        eficaxxDark: '#003366',
+                    },
+                    fontFamily: {
+                        sans: ['Open Sans', 'sans-serif'],
+                        heading: ['Montserrat', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Estilos para ocultar la barra de scroll en el modal pero permitir scroll */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animación suave para el modal */
+        #demoModal {
+            transition: opacity 0.3s ease-in-out;
+        }
+        
+        /* Simulación de iPhone CSS Puro - SIN NOTCH */
+        .iphone-frame {
+            /* El borde grueso que simula el marco del teléfono */
+            box-shadow: 0 0 0 12px #1f2937, 0 0 0 14px #374151, 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border-radius: 40px; /* Bordes redondeados del teléfono */
+            overflow: hidden;
+            position: relative;
+            background: #000;
+        }
+        
+        /* HE ELIMINADO LA CLASE .notch DE AQUÍ */
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased overflow-x-hidden">
+
+    <!-- NAVBAR -->
+    <nav class="fixed w-full z-40 bg-white/90 backdrop-blur-md shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-20">
+                <div class="flex items-center gap-2">
+                    <div class="w-8 h-8 bg-eficaxxGreen rounded-lg flex items-center justify-center text-white font-bold">L</div>
+                    <span class="font-heading font-bold text-2xl text-eficaxxBlue tracking-tight">LOTEX <span class="text-eficaxxGreen">AI</span></span>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="#problema" class="text-gray-600 hover:text-eficaxxBlue font-semibold transition">El Problema</a>
+                    <a href="#solucion" class="text-gray-600 hover:text-eficaxxBlue font-semibold transition">Nuestra Solución</a>
+                    <a href="#demo" class="text-gray-600 hover:text-eficaxxBlue font-semibold transition">Demo</a>
+                </div>
+                <button onclick="openModal()" class="bg-eficaxxBlue text-white px-6 py-2.5 rounded-full font-bold hover:bg-eficaxxDark transition shadow-lg transform hover:scale-105">
+                    Probar Demo
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+        <!-- Fondo Abstracto -->
+        <div class="absolute inset-0 bg-gradient-to-br from-gray-50 to-gray-200 -z-10"></div>
+        <div class="absolute top-0 right-0 w-1/2 h-full bg-eficaxxBlue/5 skew-x-12 transform translate-x-20"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative">
+            <div class="text-center max-w-4xl mx-auto">
+                <div class="inline-block bg-eficaxxBlue/10 text-eficaxxBlue px-4 py-1 rounded-full text-sm font-bold mb-6 animate-pulse">
+                    🚀 Potenciado por Inteligencia Artificial Generativa
+                </div>
+                <h1 class="font-heading text-5xl md:text-6xl lg:text-7xl font-extrabold text-eficaxxBlue leading-tight mb-6">
+                    No te adaptes al software. <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-eficaxxGreen to-emerald-400">Que la IA se adapte a ti.</span>
+                </h1>
+                <p class="text-xl text-gray-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                    LOTEX AI no es otro CRM o Chatbot genérico. Es un copiloto comercial entrenado específicamente con tu flujo, tus reglas y tu tono de voz. Conoce a <strong>Valeria</strong>.
+                </p>
+                
+                <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    <button onclick="openModal()" class="group bg-eficaxxGreen text-white px-8 py-4 rounded-full font-bold text-lg shadow-xl hover:shadow-2xl transition-all transform hover:-translate-y-1 flex items-center gap-3">
+                        <i class="fa-brands fa-whatsapp text-2xl"></i>
+                        Ver Live Demo
+                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                    </button>
+                    <a href="#solucion" class="text-eficaxxBlue font-semibold hover:underline decoration-eficaxxGreen underline-offset-4">
+                        Entender la tecnología &rarr;
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EL PROBLEMA (VILLANO) VS HEROE -->
+    <section id="problema" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <!-- Columna Villano -->
+                <div class="bg-gray-50 p-10 rounded-3xl border border-gray-100">
+                    <h3 class="font-heading text-2xl font-bold text-gray-400 mb-6 flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation"></i> Software Genérico
+                    </h3>
+                    <ul class="space-y-6">
+                        <li class="flex gap-4 opacity-60">
+                            <i class="fa-solid fa-xmark text-red-400 mt-1"></i>
+                            <p><strong>Rígido:</strong> Te obligan a cambiar tus procesos para encajar en sus "cajas".</p>
+                        </li>
+                        <li class="flex gap-4 opacity-60">
+                            <i class="fa-solid fa-xmark text-red-400 mt-1"></i>
+                            <p><strong>Robótico:</strong> Chatbots con respuestas pregrabadas que el cliente detecta y odia.</p>
+                        </li>
+                        <li class="flex gap-4 opacity-60">
+                            <i class="fa-solid fa-xmark text-red-400 mt-1"></i>
+                            <p><strong>Desconectado:</strong> El marketing, la venta y el cierre viven en islas separadas.</p>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Columna Héroe (LOTEX) -->
+                <div class="bg-eficaxxBlue text-white p-10 rounded-3xl shadow-2xl relative overflow-hidden transform md:scale-105">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-eficaxxGreen rounded-full blur-3xl opacity-30 -mr-10 -mt-10"></div>
+                    
+                    <h3 class="font-heading text-3xl font-bold mb-6 flex items-center gap-3 text-white">
+                        <i class="fa-solid fa-check-circle text-eficaxxGreen"></i> La Propuesta LOTEX
+                    </h3>
+                    <ul class="space-y-6 relative z-10">
+                        <li class="flex gap-4 items-start">
+                            <div class="mt-1 bg-eficaxxGreen rounded-full p-1 w-6 h-6 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <strong class="text-lg">Adaptabilidad Total</strong>
+                                <p class="text-blue-100 text-sm mt-1">Entrenamos a la IA con TUS planos, TU financiamiento y TU speech.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4 items-start">
+                            <div class="mt-1 bg-eficaxxGreen rounded-full p-1 w-6 h-6 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <strong class="text-lg">Gestión Intuitiva</strong>
+                                <p class="text-blue-100 text-sm mt-1">Desde el "Info" en Instagram hasta la cita en el lote. Un solo flujo continuo.</p>
+                            </div>
+                        </li>
+                        <li class="flex gap-4 items-start">
+                            <div class="mt-1 bg-eficaxxGreen rounded-full p-1 w-6 h-6 flex items-center justify-center text-xs">
+                                <i class="fa-solid fa-check"></i>
+                            </div>
+                            <div>
+                                <strong class="text-lg">Humanización Digital</strong>
+                                <p class="text-blue-100 text-sm mt-1">Valeria duda, usa emojis y valida emociones. Conversión real.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CARACTERÍSTICAS -->
+    <section id="solucion" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-heading text-4xl font-bold text-eficaxxBlue mb-4">El Cerebro detrás de la Venta</h2>
+                <p class="text-gray-600 max-w-2xl mx-auto">Más que un bot, una suite de herramientas diseñada para cerrar lotes.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition border-t-4 border-eficaxxGreen">
+                    <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center text-eficaxxGreen text-2xl mb-6">
+                        <i class="fa-solid fa-brain"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-gray-800 mb-3">IA Contextual</h3>
+                    <p class="text-gray-600 text-sm">Entiende si el cliente quiere invertir o vivir, y adapta sus argumentos (Plusvalía vs. Familia).</p>
+                </div>
+                <!-- Card 2 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition border-t-4 border-eficaxxBlue">
+                    <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center text-eficaxxBlue text-2xl mb-6">
+                        <i class="fa-brands fa-whatsapp"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-gray-800 mb-3">Cierre en WhatsApp</h3>
+                    <p class="text-gray-600 text-sm">No te deja en "visto". Busca activamente la cita, la llamada o la visita al proyecto.</p>
+                </div>
+                <!-- Card 3 -->
+                <div class="bg-white p-8 rounded-2xl shadow-sm hover:shadow-md transition border-t-4 border-gray-800">
+                    <div class="w-14 h-14 bg-gray-100 rounded-xl flex items-center justify-center text-gray-800 text-2xl mb-6">
+                        <i class="fa-solid fa-chart-pie"></i>
+                    </div>
+                    <h3 class="font-heading text-xl font-bold text-gray-800 mb-3">Embudo Integral</h3>
+                    <p class="text-gray-600 text-sm">Desde el anuncio en Meta hasta el CRM. Trazabilidad completa del lead.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-eficaxxBlue text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="font-heading text-2xl font-bold mb-6">¿Listo para evolucionar tu fuerza de ventas?</h2>
+            <button onclick="openModal()" class="bg-eficaxxGreen text-white px-8 py-3 rounded-full font-bold shadow-lg hover:bg-white hover:text-eficaxxGreen transition">
+                Probar Demo Interactiva
+            </button>
+            <p class="mt-8 text-blue-200 text-sm">© 2024 LOTEX AI. Desarrollado para Eficaxx Grupo Inmobiliario.</p>
+        </div>
+    </footer>
+
+    <!-- MODAL DE DEMO (IPHONE STYLE) -->
+    <div id="demoModal" class="fixed inset-0 z-50 hidden">
+        <!-- Overlay oscuro -->
+        <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" onclick="closeModal()"></div>
+        
+        <!-- Contenedor Centrado -->
+        <div class="absolute inset-0 flex items-center justify-center p-4 pointer-events-none">
+            <!-- Frame del Teléfono (Pointer events auto para interactuar) -->
+            <div class="pointer-events-auto relative w-full max-w-[360px] h-[750px] max-h-[90vh] iphone-frame bg-white transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+                
+                <!-- HE ELIMINADO EL DIV NOTCH QUE ESTABA AQUI -->
+
+                <!-- Botón de Cerrar (Fuera del iframe pero visible) -->
+                <button onclick="closeModal()" class="absolute -top-12 right-0 md:-right-12 text-white hover:text-eficaxxGreen transition z-50">
+                    <i class="fa-solid fa-xmark text-4xl"></i>
+                    <span class="text-xs block text-center mt-1">Cerrar</span>
+                </button>
+
+                <!-- El IFRAME con la demo -->
+                <iframe 
+                    src="https://villa-querencia-37933698510.us-west1.run.app/" 
+                    class="w-full h-full border-0 bg-white"
+                    title="Demo Chatbot Valeria"
+                    allow="microphone; camera; geolocation">
+                </iframe>
+                
+                <!-- Indicador de Home (Barra inferior iOS) -->
+                <div class="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-black rounded-full z-20 opacity-20"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script>
+        const modal = document.getElementById('demoModal');
+        const modalContent = document.getElementById('modalContent');
+        const body = document.body;
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            body.classList.add('overflow-hidden'); // Evitar scroll en el fondo
+            
+            // Pequeño delay para la animación de entrada
+            setTimeout(() => {
+                modalContent.classList.remove('scale-95', 'opacity-0');
+                modalContent.classList.add('scale-100', 'opacity-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            modalContent.classList.remove('scale-100', 'opacity-100');
+            modalContent.classList.add('scale-95', 'opacity-0');
+            
+            // Esperar a que termine la animación para ocultar
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                body.classList.remove('overflow-hidden');
+            }, 300);
+        }
+
+        // Cerrar con tecla ESC
+        document.addEventListener('keydown', function(event) {
+            if (event.key === "Escape") {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
