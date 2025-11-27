@@ -1,516 +1,297 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LOTEX AI | Inteligencia Inmobiliaria a Medida</title>
-    
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Google Fonts (Montserrat & Open Sans) -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
-    
-    <!-- FontAwesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+import React, { useState } from 'react';
+import { ArrowLeft, X, Bus, MapPin, CalendarCheck } from 'lucide-react';
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    // Paleta de Colores Eficaxx
-                    colors: {
-                        'brand-blue': '#004f8f',
-                        'brand-green': '#78ab00',
-                        'brand-dark': '#003366',
-                        'brand-neutral': '#f2f1f0',
-                    },
-                    fontFamily: {
-                        sans: ['Open Sans', 'sans-serif'],
-                        heading: ['Montserrat', 'sans-serif'],
-                    }
-                }
-            }
-        }
-    </script>
+// *** IMPORTANTE: Asumimos que el servicio de Gemini ya está importado y funcionando en el módulo del IFRAME ***
+// import { sendMessageToGemini } from '../services/geminiService'; 
 
-    <style>
-        /* Estilos para asegurar que el contenido de la Landing no se estire */
-        body {
-            background-color: #f0f2f5; /* Fondo general que se ve en el navegador */
-        }
-        /* El contenedor principal de la web fuerza el ancho móvil */
-        #landing-content {
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
+interface LandingPageProps {
+  onBack: () => void;
+}
 
-        /* Estilos para el Modal de Chat (Asegura que el fondo del chat sea el correcto) */
-        #chat-modal-overlay {
-            transition: opacity 0.3s ease-in-out;
-        }
-        /* Fondo de chat genérico para simular WhatsApp */
-        .whatsapp-bg {
-            background-image: url("https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png");
-            background-size: 400px;
-            background-blend-mode: soft-light;
-        }
-    </style>
-</head>
-<body class="font-sans text-gray-800 antialiased">
+export const LandingPage: React.FC<LandingPageProps> = ({ onBack }) => {
+  // Estado para controlar la visibilidad del Modal/Iframe de Demo
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-    <!-- CONTENEDOR PRINCIPAL CENTRADO (SOLUCIONA EL PROBLEMA DE ESTIRAMIENTO) -->
-    <div id="landing-content" class="max-w-[480px] mx-auto min-h-screen bg-white relative shadow-2xl">
+  // Función principal que abre el modal de la demo
+  const openDemoModal = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsModalOpen(true);
+    document.body.classList.add('overflow-hidden'); // Bloquear scroll de fondo
+  };
 
-        <!-- NAVBAR (Fija y Ancha solo 480px) -->
-        <nav class="fixed w-[480px] max-w-[480px] z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100 top-0">
-            <div class="px-4">
-                <div class="flex justify-between items-center h-20">
-                    <div class="flex items-center gap-2">
-                        <div class="w-8 h-8 bg-brand-green rounded-lg flex items-center justify-center text-white font-bold">L</div>
-                        <span class="font-heading font-bold text-2xl text-brand-blue tracking-tight">LOTEX <span class="text-brand-green">AI</span></span>
-                    </div>
-                    <div class="hidden md:flex space-x-8">
-                        <a href="#problema" class="text-gray-600 hover:text-brand-blue font-semibold transition">El Problema</a>
-                        <a href="#solucion" class="text-gray-600 hover:text-brand-blue font-semibold transition">Nuestra Solución</a>
-                        <a href="#demo" class="text-gray-600 hover:text-brand-blue font-semibold transition">Demo</a>
-                    </div>
-                    <button onclick="openModal('general')" class="bg-brand-blue text-white px-4 py-2 rounded-full font-bold hover:bg-brand-dark transition shadow-lg transform hover:scale-105 text-sm">
-                        Probar Demo
-                    </button>
-                </div>
-            </div>
-        </nav>
+  const closeModal = () => {
+    setIsModalOpen(false);
+    document.body.classList.remove('overflow-hidden'); // Desbloquear scroll de fondo
+  };
 
-        <!-- HERO SECTION (Contenido adaptado al tamaño de 480px) -->
-        <header class="relative pt-24 pb-10 md:pt-32 overflow-hidden" style="padding-top: 100px;"> <!-- Ajuste de padding para navbar fija -->
-            <!-- Imagen de Fondo -->
-            <div class="absolute inset-0 z-0">
+  // Usaremos este manejo para todos los CTAs
+  const handleCtaClick = (e: React.MouseEvent, context: string) => {
+    // En este nuevo enfoque, CUALQUIER CTA abre el IFRAME de la demo.
+    // El chatbot DENTRO del iframe leerá el contexto de la URL o del primer mensaje si lo ponemos.
+    openDemoModal(e);
+  };
+  
+  // Manejo de tecla ESC para cerrar el modal
+  React.useEffect(() => {
+    const handleKeydown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        closeModal();
+      }
+    };
+    document.addEventListener('keydown', handleKeydown);
+    return () => document.removeEventListener('keydown', handleKeydown);
+  }, []);
+
+  // --- Estilos de color personalizados basados en Tailwind config previa ---
+  const colorBlue = '#004f8f';
+  const colorGreen = '#78aa00';
+  // -----------------------------------------------------------------------
+
+  return (
+    // CONTENEDOR PRINCIPAL: Centrado y con ancho máximo para evitar que se estire en Laptop (Solución visual)
+    <div className="w-full h-full bg-[#f0f2f5] flex justify-center overflow-hidden font-sans">
+        
+      <div className="w-full max-w-[480px] h-full bg-white relative shadow-2xl overflow-y-auto flex flex-col">
+        
+        {/* Floating Back Button - Se mantiene por si la vista es un módulo dentro de una app mayor */}
+        <div className="absolute top-4 left-4 z-40">
+            <button 
+                onClick={onBack} 
+                className="bg-black/40 hover:bg-black/60 text-white p-2 rounded-full backdrop-blur-sm transition-all"
+            >
+                <ArrowLeft className="w-6 h-6" />
+            </button>
+        </div>
+
+        {/* ==========================================
+            BLOQUE 1: HERO SECTION (STORYTELLING 2028)
+        =========================================== */}
+        <header className="relative h-[500px] flex-shrink-0">
+            {/* Imagen */}
+            <div className="absolute inset-0">
                 <img 
                     src="https://e.nexoinmobiliario.pe/customers/eficaxx-grupo-inmobiliario/4027-villa-querencia/lotes-huaral-690e1e30305dd_b.jpg" 
-                    alt="Familia feliz en el campo" 
-                    class="w-full h-full object-cover object-center" 
+                    alt="Futuro Huaral" 
+                    className="w-full h-full object-cover"
                 />
-                <!-- Overlay Oscuro -->
-                <div class="absolute inset-0 bg-black/40"></div>
+                <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-transparent to-black/80"></div>
             </div>
 
-            <!-- Contenido -->
-            <div class="relative z-10 container mx-auto px-4 text-center">
+            {/* Contenido Hero */}
+            <div className="absolute bottom-0 left-0 w-full p-6 text-white pb-12">
+                <div className={`inline-block bg-[${colorGreen}] text-white text-xs font-bold px-2 py-1 rounded mb-3 uppercase tracking-wider`}>
+                    Preventa Exclusiva
+                </div>
+                <h1 className="text-4xl font-heading font-extrabold leading-tight mb-2">
+                    A 20 Minutos <br/> del Futuro.
+                </h1>
+                <p className="text-lg text-gray-200 mb-6 font-light leading-snug">
+                    Asegura tu patrimonio en la zona de mayor explosión económica gracias al <b>Megapuerto de Chancay</b>.
+                </p>
                 
-                <div class="mt-8">
-                    <div class="inline-block bg-brand-green/20 text-brand-green px-3 py-1 rounded-full text-xs font-bold mb-4">
-                        🚀 IA que Vende, No que Pregunta
-                    </div>
-                    <h1 class="font-heading text-4xl font-extrabold text-white leading-tight mb-4 drop-shadow-lg">
-                        No te adaptes al software. <span class="text-brand-green block">Que la IA se adapte a ti.</span>
-                    </h1>
-                    <p class="text-md text-gray-200 mb-8 max-w-xs mx-auto">
-                        LOTEX AI: El copiloto comercial entrenado con el flujo de **Valeria** y la visión de **Villa Querencia**.
-                    </p>
-                    
-                    <!-- CTA Principal -->
-                    <button onclick="openModal('general')" class="group bg-brand-green text-white px-8 py-3 rounded-full font-bold shadow-xl hover:shadow-2xl transition-all transform hover:scale-[1.02] flex items-center gap-3 justify-center mx-auto">
-                        <i class="fa-brands fa-whatsapp text-xl"></i>
-                        Ver Demo en Vivo
+                <div className="flex gap-3">
+                    <button 
+                        onClick={(e) => handleCtaClick(e, 'inversion')}
+                        className="flex-1 bg-white text-[#004f8f] font-bold py-3 rounded-lg shadow-lg active:scale-95 transition text-sm flex items-center justify-center gap-2"
+                    >
+                        <i className="fa-solid fa-chart-line"></i> Ver Rentabilidad
+                    </button>
+                    <button 
+                        onClick={(e) => handleCtaClick(e, 'tour')}
+                        className={`flex-1 bg-[${colorGreen}] text-white font-bold py-3 rounded-lg shadow-lg active:scale-95 transition text-sm flex items-center justify-center gap-2`}
+                    >
+                        <Bus className="w-4 h-4" /> Visita Guiada
                     </button>
                 </div>
             </div>
         </header>
 
-        <!-- BLOQUE 2: DATOS DUROS (EFECTO CHANCAY) -->
-        <section id="problema" class="py-10 px-4 bg-white">
-            <h2 class="text-brand-blue font-bold text-2xl mb-6 font-heading text-center">
-                El Poder de la Anticipación
+        {/* ==========================================
+            BLOQUE 2: DATOS DUROS (EFECTO CHANCAY)
+        =========================================== */}
+        <section className="py-10 px-6 bg-white">
+            <h2 className={`text-[${colorBlue}] font-bold text-2xl mb-6 font-heading text-center`}>
+                ¿Por qué invertir aquí?
             </h2>
             
-            <div class="space-y-6">
-                <!-- Dato 1 -->
-                <div class="flex gap-4 items-start">
-                    <div class="w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 text-brand-blue">
-                        <i class="fa-solid fa-ship text-xl"></i>
+            <div className="space-y-6">
+                {/* Dato 1 */}
+                <div className="flex gap-4 items-start">
+                    <div className={`w-12 h-12 bg-blue-50 rounded-full flex items-center justify-center flex-shrink-0 text-[${colorBlue}]`}>
+                        <i className="fa-solid fa-ship text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-800 text-lg">Efecto Chancay</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            La cercanía al Megapuerto garantiza la **plusvalía** de tu lote para el 2028.
+                        <h3 className="font-bold text-gray-800 text-lg">Efecto Chancay</h3>
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                            El Hub logístico más grande de Sudamérica revalorizará tu tierra automáticamente para el 2028.
                         </p>
                     </div>
                 </div>
 
-                <!-- Dato 2 -->
-                <div class="flex gap-4 items-start">
-                    <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0 text-brand-green">
-                        <i class="fa-solid fa-map-location-dot text-xl"></i>
+                {/* Dato 2 */}
+                <div className="flex gap-4 items-start">
+                    <div className={`w-12 h-12 bg-green-50 rounded-full flex items-center justify-center flex-shrink-0 text-[${colorGreen}]`}>
+                        <i className="fa-solid fa-map-location-dot text-xl"></i>
                     </div>
                     <div>
-                        <h3 class="font-bold text-gray-800 text-lg">La Regla de los 20 Min</h3>
-                        <p class="text-gray-600 text-sm leading-relaxed">
-                            Cerca del trabajo, lejos del caos. La zona residencial estratégica.
+                        <h3 className="font-bold text-gray-800 text-lg">La Regla de los 20 Min</h3>
+                        <p className="text-gray-600 text-sm leading-relaxed">
+                            Suficientemente cerca para trabajar en el Puerto, suficientemente lejos para vivir sin ruido ni caos.
                         </p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- BLOQUE 3: EL VILLANO (LIMA GRIS) vs HÉROE (HUARAL) -->
-        <section id="solucion" class="py-12 px-4 bg-brand-neutral">
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center">
-                <h3 class="text-gray-500 text-sm uppercase tracking-widest font-bold mb-4">Estilo de Vida</h3>
-                <h2 class="text-3xl font-heading font-bold text-brand-blue mb-4">
-                    Adiós Cielo Gris, Hola Domingo Eterno
+        {/* ==========================================
+            BLOQUE 3: EL VILLANO (LIMA GRIS) vs HÉROE (HUARAL)
+        =========================================== */}
+        <section className={`bg-[#f2f1f0] py-12 px-6`}>
+            <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 text-center">
+                <h3 className="text-gray-500 text-sm uppercase tracking-widest font-bold mb-4">Estilo de Vida</h3>
+                <h2 className={`text-3xl font-heading font-bold text-[${colorBlue}] mb-4`}>
+                    Adiós Cielo Gris
                 </h2>
-                <p class="text-gray-600 mb-6 text-sm">
-                    Aire puro, sol todo el año y seguridad 24/7 para tu familia.
+                <p className="text-gray-600 mb-6">
+                    No compras un terreno, compras tus mejores domingos. Aire puro, sol todo el año y seguridad 24/7 para tus hijos.
                 </p>
-                <div class="grid grid-cols-3 gap-2 text-center text-xs text-gray-500 font-semibold">
-                    <div class="bg-gray-50 p-2 rounded">
-                        <i class="fa-solid fa-sun text-2xl text-brand-blue mb-1 block"></i>
-                        Clima
+                <div className="grid grid-cols-3 gap-2 text-center text-xs text-gray-500 font-semibold">
+                    <div className="bg-gray-50 p-2 rounded">
+                        <i className={`fa-solid fa-swimming-pool text-2xl text-[${colorBlue}] mb-1 block`}></i>
+                        Piscina
                     </div>
-                    <div class="bg-gray-50 p-2 rounded">
-                        <i class="fa-solid fa-people-roof text-2xl text-brand-green mb-1 block"></i>
-                        Parqueo
+                    <div className="bg-gray-50 p-2 rounded">
+                        <i className={`fa-solid fa-tree text-2xl text-[${colorGreen}] mb-1 block`}></i>
+                        Parques
                     </div>
-                    <div class="bg-gray-50 p-2 rounded">
-                        <i class="fa-solid fa-shield-alt text-2xl text-gray-700 mb-1 block"></i>
+                    <div className="bg-gray-50 p-2 rounded">
+                        <i className="fa-solid fa-shield text-2xl text-gray-700 mb-1 block"></i>
                         Seguridad
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- BLOQUE 4: GANCHOS DE CIERRE (EL BUS Y ASESOR) -->
-        <section class="py-12 px-4 bg-white pb-32">
-            <div class="text-center mb-8">
-                <h2 class="text-brand-blue font-bold text-2xl mb-2 font-heading">
-                    El Cierre está en la Experiencia
+        {/* ==========================================
+            BLOQUE 4: GANCHOS DE CIERRE (VISITA + ASESOR)
+        =========================================== */}
+        <section className="py-12 px-6 bg-white pb-32">
+            <div className="text-center mb-8">
+                <h2 className={`text-[${colorBlue}] font-bold text-2xl mb-2 font-heading`}>
+                    Vívelo antes de comprar
                 </h2>
-                <p class="text-gray-500 text-sm">Trazabilidad total: Del clic al asesor autorizado.</p>
+                <p className="text-gray-500 text-sm">El papel aguanta todo, la realidad enamora.</p>
             </div>
 
-            <!-- CTA del Bus (Simula wa.link con data-cta) -->
-            <div id="demo-bus" data-cta="tour" class="rounded-2xl p-6 text-white shadow-xl mb-6 cursor-pointer transform transition active:scale-[0.97] overflow-hidden" style="background-color: #004f8f;">
-                <div class="flex justify-between items-center">
+            {/* Card Visita Guiada - CTA PRINCIPAL */}
+            <div 
+                onClick={(e) => handleCtaClick(e, 'tour')}
+                className={`relative bg-gradient-to-r from-[${colorBlue}] to-[#003366] rounded-2xl p-6 text-white shadow-xl mb-6 cursor-pointer transform transition active:scale-95 group overflow-hidden`}
+            >
+                <div className="absolute right-0 top-0 w-32 h-32 bg-white/10 rounded-full -mr-10 -mt-10 blur-2xl"></div>
+                <div className="relative z-10 flex justify-between items-center">
                     <div>
-                        <div class="flex items-center gap-2 mb-2">
+                        <div className="flex items-center gap-2 mb-2">
                             <Bus className="text-[#78aa00]" />
-                            <span class="font-bold uppercase text-xs" style="color: #78aa00;">Cierre BOFU: Visita Guiada</span>
+                            <span className={`font-bold text-[${colorGreen}] uppercase text-xs`}>Cupos Limitados</span>
                         </div>
-                        <h3 class="text-xl font-bold mb-1">Bus de Visita Gratuito</h3>
-                        <p class="text-blue-200 text-xs mb-3">Te llevamos a Huaral este domingo. Reserva tu cupo.</p>
-                        <span class="inline-block bg-white/20 px-3 py-1 rounded text-xs font-semibold">
-                            Agendar Viaje &rarr;
+                        <h3 className="text-xl font-bold mb-1">Bus de Visita Gratuito</h3>
+                        <p className="text-blue-100 text-xs mb-3">Salidas desde Lima todos los Domingos.</p>
+                        <span className="inline-block bg-white/20 px-3 py-1 rounded text-xs font-semibold">
+                            Reservar Asiento &rarr;
                         </span>
                     </div>
-                    <div class="text-5xl opacity-50">
+                    <div className="text-4xl opacity-50 group-hover:scale-110 transition">
                         <MapPin />
                     </div>
                 </div>
             </div>
 
-            <!-- CTA Reunión Asesor -->
-            <div id="asesor-link" data-cta="asesoria" class="border-2 border-gray-200 rounded-2xl p-5 flex items-center gap-4 hover:border-brand-green transition cursor-pointer active:scale-[0.98] bg-white">
-                <div class="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
-                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200" alt="Asesor" class="w-full h-full object-cover" />
+            {/* Card Reunión Asesor */}
+            <div 
+                onClick={(e) => handleCtaClick(e, 'asesoria')}
+                className={`border-2 border-[#f0f2f5] rounded-2xl p-6 flex items-center gap-4 hover:border-[${colorGreen}] transition cursor-pointer active:scale-95 bg-white`}
+            >
+                <div className="w-12 h-12 rounded-full bg-gray-200 overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200" alt="Asesor" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                    <h3 class="font-bold text-gray-800 text-sm">Dudas de Financiamiento (Crédito Directo)</h3>
-                    <p class="text-gray-500 text-xs">Agenda 15 min con Valeria para tu estudio de caso.</p>
+                    <h3 className="font-bold text-gray-800 text-sm">¿Dudas sobre Crédito Directo?</h3>
+                    <p className="text-gray-500 text-xs">Agenda una reunión de 15 min con un asesor certificado.</p>
                 </div>
-                <div class="ml-auto text-brand-green">
-                    <CalendarCheck className="w-6 h-6" />
+                <div className={`ml-auto text-[${colorGreen}]`}>
+                    <CalendarCheck />
                 </div>
             </div>
 
+            {/* Trust Badges */}
+            <div className="mt-12 flex justify-center items-center gap-6 opacity-40 grayscale">
+                 <div className="flex flex-col items-center">
+                    <i className="fa-solid fa-building text-2xl"></i>
+                    <span className="text-[10px] font-bold mt-1">EFICAXX</span>
+                </div>
+                <div className="h-8 w-px bg-gray-400"></div>
+                <div className="flex flex-col items-center">
+                    <i className="fa-solid fa-hand-holding-dollar text-2xl"></i>
+                    <span className="text-[10px] font-bold mt-1">NEXO</span>
+                </div>
+                <div className="h-8 w-px bg-gray-400"></div>
+                <div className="flex flex-col items-center">
+                    <i className="fa-solid fa-landmark text-2xl"></i>
+                    <span className="text-[10px] font-bold mt-1">BCP</span>
+                </div>
+            </div>
         </section>
 
-        <!-- STICKY BAR (MÓVIL) -->
-        <div class="fixed bottom-0 left-0 right-0 mx-auto w-[480px] bg-white border-t border-gray-100 p-4 flex items-center justify-between z-40 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
+        {/* ==========================================
+            STICKY BAR (MÓVIL)
+        =========================================== */}
+        <div className="absolute bottom-0 left-0 w-full bg-white border-t border-gray-100 p-4 pb-6 flex items-center justify-between z-30 shadow-[0_-5px_20px_rgba(0,0,0,0.05)]">
             <div>
-                <p class="text-[10px] text-gray-500 font-bold uppercase">Precio Preventa</p>
-                <p class="text-2xl font-extrabold text-brand-blue">S/ 41,050</p>
+                <p className="text-[10px] text-gray-500 font-bold uppercase">Precio Preventa</p>
+                <p className={`text-2xl font-extrabold text-[${colorBlue}]`}>S/ 41,050</p>
             </div>
             <button 
-                onclick="openModal('cotizar_sticky')"
-                class="bg-brand-green hover:bg-opacity-90 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-2 transition active:scale-95"
+                onClick={(e) => handleCtaClick(e, 'cotizar_sticky')}
+                className={`bg-[${colorGreen}] hover:bg-opacity-90 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center gap-2 transition active:scale-95`}
             >
-                <i class="fa-brands fa-whatsapp text-xl"></i>
-                <span class="text-sm">Cotizar Ahora</span>
+                <i className="fa-brands fa-whatsapp text-xl"></i>
+                <span className="text-sm">Cotizar Ahora</span>
             </button>
         </div>
-    </div> <!-- FIN CONTENEDOR PRINCIPAL -->
 
+        {/* ==========================================
+            MODAL DE DEMO (IFRAME CON EL CHATBOT)
+        =========================================== */}
+        {isModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-end justify-center">
+                {/* Backdrop */}
+                <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={closeModal}></div>
+                
+                {/* Frame del Teléfono - SIMULACIÓN DE IPHONE */}
+                <div className="pointer-events-auto relative w-full max-w-[360px] h-[85vh] max-h-[800px] bg-black border-[12px] border-zinc-800 rounded-[45px] shadow-[0_0_0_14px_#374151,0_25px_50px_-12px_rgba(0,0,0,0.5)] flex flex-col overflow-hidden transform transition-all duration-300 scale-95 opacity-0" id="modalContent">
+                    
+                    {/* Botón de Cerrar */}
+                    <button onClick={closeModal} className="absolute -top-12 right-0 md:-right-12 text-white hover:text-red-400 transition z-50">
+                        <i className="fa-solid fa-xmark text-4xl"></i>
+                        <span className="text-xs block text-center mt-1">Cerrar Demo</span>
+                    </button>
 
-    <!-- MODAL DE CHAT FLOTANTE (WhatsApp Simulation) -->
-    <div id="chat-modal-overlay" class="fixed inset-0 z-50 hidden opacity-0">
-        <!-- Backdrop -->
-        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm" onclick="closeModal()"></div>
-        
-        <!-- Contenedor del Chat (Estilo App Móvil) -->
-        <div class="absolute bottom-0 left-0 right-0 mx-auto w-full max-w-[480px] h-[90vh] bg-[#efeae2] rounded-t-[2rem] shadow-2xl flex flex-col relative overflow-hidden">
-            
-            <!-- Header WhatsApp Style -->
-            <div class="bg-[#008069] px-4 py-4 flex items-center justify-between shadow-md">
-                <div class="flex items-center gap-3 text-white">
-                    <div class="relative">
-                        <img 
-                            src="https://e.nexoinmobiliario.pe/customers/eficaxx-grupo-inmobiliario/logo-336-20250912121834.jpg" 
-                            alt="Eficaxx" 
-                            class="w-10 h-10 rounded-full object-cover border-2 border-white/20"
-                        />
-                        <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-400 rounded-full border border-[#008069]"></div>
-                    </div>
-                    <div class="flex flex-col">
-                        <span class="font-bold text-base leading-tight">Valeria | Villa Querencia</span>
-                        <span class="text-xs text-green-100 opacity-90">En línea ahora</span>
-                    </div>
-                </div>
-                <div class="flex items-center gap-4 text-white">
-                    <i class="fa-solid fa-phone w-5 h-5 opacity-80 cursor-not-allowed"></i>
-                    <i class="fa-solid fa-xmark w-6 h-6 cursor-pointer opacity-80 hover:opacity-100 rounded-full p-0.5 transition" onclick="closeModal()"></i>
+                    {/* El IFRAME con el Chatbot (Tu Módulo 3/4/5) */}
+                    <iframe 
+                        src="https://eficaxx-chatbot-842323622032.us-west1.run.app/" 
+                        className="w-full h-full border-0 bg-white"
+                        title="Demo Chatbot Valeria"
+                        allow="microphone; camera; geolocation"
+                    ></iframe>
+                    
+                    {/* Barra inferior de iOS simulada */}
+                    <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-white rounded-full z-20 opacity-20"></div>
                 </div>
             </div>
+        )}
 
-            <!-- Messages Area -->
-            <div 
-                id="chat-window"
-                class="flex-1 overflow-y-auto p-4 space-y-3 relative whatsapp-bg"
-            >
-                <!-- Mensaje Inicial Contextual (Se reemplaza por el JS) -->
-                <div id="initial-bot-message" class="flex justify-center mb-4">
-                    <div class="bg-[#f0f2f5] px-3 py-1 rounded-lg shadow-sm border border-gray-200">
-                        <p class="text-[10px] text-gray-500 text-center flex items-center gap-1">
-                            <i class="fa-solid fa-lock text-[8px]"></i> Mensajes cifrados de extremo a extremo.
-                        </p>
-                    </div>
-                </div>
-
-                <div id="messages-container"></div>
-
-                <div id="typing-indicator" class="flex justify-start hidden">
-                    <div class="bg-white rounded-lg px-4 py-2 shadow-sm">
-                        <div class="flex gap-1">
-                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></div>
-                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 75ms;"></div>
-                            <div class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms;"></div>
-                        </div>
-                    </div>
-                </div>
-                <div id="messages-end-ref" />
-            </div>
-
-            <!-- Input Area -->
-            <div class="bg-[#f0f2f5] p-2 flex items-center gap-2 pb-6 sm:pb-2">
-                <div class="bg-white flex-1 rounded-full flex items-center px-4 py-2 shadow-sm border border-gray-200">
-                    <input
-                        type="text"
-                        id="chat-input"
-                        placeholder="Escribe un mensaje..."
-                        class="w-full bg-transparent border-none focus:outline-none text-gray-700 text-sm"
-                    />
-                </div>
-                <button 
-                    id="send-button"
-                    class="p-3 rounded-full flex items-center justify-center transition bg-[#008069] text-white hover:scale-105 shadow-md"
-                >
-                    <i class="fa-solid fa-paper-plane ml-0.5"></i>
-                </button>
-            </div>
-
-        </div>
+      </div>
     </div>
-
-    <!-- SCRIPTS JAVASCRIPT PURO -->
-    <script>
-        // --- VARIABLES GLOBALES (Simulando el State de React) ---
-        let isChatOpen = false;
-        let messages = [];
-        let chatContext = '';
-        let isTyping = false;
-
-        // --- Elementos del DOM ---
-        const modalOverlay = document.getElementById('chat-modal-overlay');
-        const landingContent = document.getElementById('landing-content');
-        const chatWindow = document.getElementById('chat-window');
-        const messagesContainer = document.getElementById('messages-container');
-        const chatInput = document.getElementById('chat-input');
-        const sendButton = document.getElementById('send-button');
-        const typingIndicator = document.getElementById('typing-indicator');
-        const initialBotMessage = document.getElementById('initial-bot-message');
-
-        // --- Funciones de UI/UX ---
-        function openModal(context = 'general') {
-            chatContext = context;
-            isChatOpen = true;
-            modalOverlay.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
-            
-            // Animación de entrada
-            setTimeout(() => {
-                modalOverlay.style.opacity = 1;
-            }, 10);
-            
-            // Simular mensaje inicial contextual
-            simulateInitialBotMessage(context);
-        }
-
-        function closeModal() {
-            isChatOpen = false;
-            modalOverlay.style.opacity = 0;
-            document.body.classList.remove('overflow-hidden');
-            
-            // Esperar animación y limpiar
-            setTimeout(() => {
-                modalOverlay.classList.add('hidden');
-                messages = [];
-                chatContext = '';
-                renderChat();
-            }, 300);
-        }
-
-        function simulateInitialBotMessage(context) {
-            // Limpia cualquier mensaje previo del simulador
-            messages = []; 
-            renderChat(); // Renderiza vacío primero
-
-            // Simula un pequeño delay para que el usuario vea que se está cargando
-            setTimeout(() => {
-                let initialText = "¡Hola! 👋 Bienvenido a Villa Querencia. Soy Valeria. ¿Te gustaría recibir el plano actualizado y precios?";
-                
-                if (context === 'tour') {
-                    initialText = "¡Hola! 👋 Veo que te interesa la Visita Guiada en Bus. Salimos todos los domingos. ¿Para cuántas personas te gustaría reservar?";
-                } else if (context === 'inversion') {
-                    initialText = "¡Hola! 👋 Excelente decisión pensar en inversión. Huaral tiene la plusvalía más alta por el Puerto. ¿Buscas comprar al contado o financiado?";
-                } else if (context === 'cotizar_sticky' || context === 'general') {
-                    initialText = "¡Hola! 👋 Te envío la información de precios al instante. ¿Buscas lote para vivir o para inversión?";
-                }
-                
-                const botMsg = {
-                    id: Date.now().toString(),
-                    text: initialText,
-                    isUser: false,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                };
-                messages.push(botMsg);
-                renderChat();
-            }, 1000); 
-        }
-
-        // --- Lógica de Renderizado ---
-        function renderChat() {
-            messagesContainer.innerHTML = '';
-            
-            messages.forEach(msg => {
-                const msgDiv = document.createElement('div');
-                msgDiv.className = `flex w-full ${msg.isUser ? 'justify-end' : 'justify-start'} animate-in fade-in duration-200`;
-                
-                const bubble = document.createElement('div');
-                bubble.className = `relative max-w-[85%] px-3 py-2 rounded-lg text-sm shadow-sm ${
-                    msg.isUser 
-                    ? 'bg-[#d9fdd3] text-[#111b21] rounded-tr-none' 
-                    : 'bg-white text-[#111b21] rounded-tl-none'
-                }`;
-
-                const textContent = document.createElement('div');
-                textContent.className = 'break-words pb-1';
-                textContent.innerText = msg.text;
-
-                const timeStamp = document.createElement('span');
-                timeStamp.className = `block text-[10px] text-right mt-1 ${msg.isUser ? 'text-green-800/60' : 'text-gray-400'}`;
-                timeStamp.innerHTML = msg.timestamp + (msg.isUser ? '<i class="fa-solid fa-check-double text-blue-500 ml-1"></i>' : '');
-
-                bubble.appendChild(textContent);
-                bubble.appendChild(timeStamp);
-                msgDiv.appendChild(bubble);
-                messagesContainer.appendChild(msgDiv);
-            });
-
-            // Typing Indicator
-            typingIndicator.classList.toggle('hidden', !isTyping);
-            
-            // Scroll al final
-            chatWindow.scrollTop = chatWindow.scrollHeight;
-        }
-
-        // --- Lógica de Envío (SIMULANDO LLAMADA A GEMINI) ---
-        function handleSend() {
-            const text = chatInput.value.trim();
-            if (!text) return;
-
-            const now = new Date();
-            const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-
-            const userMsg = {
-                id: Date.now().toString(),
-                text: text,
-                isUser: true,
-                timestamp: timeString,
-            };
-
-            messages.push(userMsg);
-            chatInput.value = '';
-            renderChat();
-            
-            // 1. Simular que Valeria está pensando
-            isTyping = true;
-            renderChat();
-
-            // 2. Simular llamada a Gemini (Aquí integrarías tu 'sendMessageToGemini(text, 'whatsapp')' REAL)
-            setTimeout(() => {
-                isTyping = false;
-                
-                // SIMULACIÓN DE RESPUESTA DE VALERIA (Basada en tu lógica entrenada)
-                let simulatedResponse = "Entendido. Gracias por el contexto. Para poder avanzar mejor, ¿te gustaría que te agende una llamada de 5 minutos o prefieres una videollamada para mostrarte el plan maestro?";
-
-                if (text.toLowerCase().includes("precio") || text.toLowerCase().includes("41000")) {
-                    simulatedResponse = "¡Claro! El precio base es S/ 41,050. Para separar, solo se necesita un monto mínimo. ¿Tienes liquidez para la cuota inicial (20%) o necesitas crédito directo?";
-                } else if (text.toLowerCase().includes("visita") || text.toLowerCase().includes("bus")) {
-                    simulatedResponse = "¡Perfecto! Para asegurar tu cupo en el bus de este domingo, necesito confirmar tu nombre completo y teléfono. ¿Te parece si te llamamos en 5 minutos para coordinar la recogida?";
-                }
-
-                const botMsg = {
-                    id: (Date.now() + 1).toString(),
-                    text: simulatedResponse,
-                    isUser: false,
-                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-                };
-
-                messages.push(botMsg);
-                renderChat();
-            }, 2500); // Tiempo simulado de respuesta
-        }
-
-        // --- Event Listeners ---
-        window.onload = () => {
-            // Asegurar que la vista principal esté centrada y con ancho fijo
-            landingContent.style.maxWidth = `${MAX_WIDTH}px`;
-            landingContent.style.margin = '0 auto';
-            
-            // Inicializar eventos de envío
-            sendButton.addEventListener('click', handleSend);
-            chatInput.addEventListener('keydown', (e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleSend();
-                }
-            });
-        }
-
-        // Eventos de los CTA de la Landing (¡La clave de la trazabilidad!)
-        document.querySelectorAll('[data-cta]').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const context = button.getAttribute('data-cta');
-                openModal(context);
-            });
-        });
-
-        // Asegurar que el overlay empiece oculto
-        modalOverlay.style.opacity = 0;
-        modalOverlay.addEventListener('transitionend', () => {
-             if (modalOverlay.style.opacity == 0) {
-                modalOverlay.classList.add('hidden');
-            }
-        });
-    </script>
-</body>
-</html>
+  );
+};
